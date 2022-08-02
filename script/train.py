@@ -23,7 +23,8 @@ from module import GreedyGenerator
 from script.optimizer import AdamW
 from utils import load_vocab, get_linear_schedule_with_warmup
 from valid_metrices.bleu_metrice import BLEU4, bleu_output_transform
-import signal
+
+
 
 __all__ = ['run']
 
@@ -122,8 +123,7 @@ def get_dataflow(config):
 def get_data_loader(config, is_train, data_set):
     batch_size = config.batch_size
     is_shuffle = True if is_train else False
-    #    num_workers = config.num_threads if is_train else 0
-    num_workers = 0
+    num_workers = config.num_threads if is_train else 0
     if config.multi_gpu:
         data_loader = idist.auto_dataloader(dataset=data_set,
                                             batch_size=batch_size,
@@ -148,11 +148,8 @@ def training(local_rank, config=None, **kwargs):
         if config.use_clearml:
             from clearml import Task
             from utils import exp_tracking
-
-            print("flag1")
             task = Task.init(project_name=config.project_name,
                              task_name=config.task_name + params2str(hype_params))
-            print("flag2")
             task.connect_configuration(config.config_filepath.as_posix())
             if hype_params is not None:
                 exp_tracking.log_params(get_params(config, config.schema))
@@ -224,23 +221,18 @@ def training(local_rank, config=None, **kwargs):
 
             if 'clear_ml' in config.logger:
                 from ignite.contrib.handlers import clearml_logger
-                try:
-                    exp_tracking_logger = exp_tracking.setup_logging(
-                        trainer, optimizer, evaluators={"validation": evaluator}
-                    )
-                except:
-                    logger.info("exception")
+                from utils import exp_tracking
+                exp_tracking_logger = exp_tracking.setup_logging(
+                    trainer, optimizer, evaluators={"validation": evaluator}
+                )
 
-                try:
-                    exp_tracking_logger.attach(
-                        trainer,
-                        log_handler=clearml_logger.OutputHandler(
-                            tag="training", output_transform=lambda loss: {"loss": loss}, metric_names="all"
-                        ),
-                        event_name=Events.ITERATION_COMPLETED(every=50)
-                    )
-                except:
-                    logger.info("exception")
+                exp_tracking_logger.attach(
+                    trainer,
+                    log_handler=clearml_logger.OutputHandler(
+                        tag="training", output_transform=lambda loss: {"loss": loss}, metric_names="all"
+                    ),
+                    event_name=Events.ITERATION_COMPLETED(every=50)
+                )
 
     trainer.run(train_loader, max_epochs=config.num_epochs)
 
@@ -261,7 +253,6 @@ def training(local_rank, config=None, **kwargs):
 
 
 def test(local_rank, config, logger):
-    signal.signal(signal.SIGPIPE, signal.SIG_IGN)  # 忽略SIGPIPE信号
     if local_rank == 0:
         torch.cuda.empty_cache()
         output_path = config.output_path.as_posix()
@@ -291,8 +282,7 @@ def test(local_rank, config, logger):
         test_loader = DataLoader(dataset=test_data_set,
                                  batch_size=config.batch_size // len(config.g.split(',')),
                                  shuffle=False,
-                                 collate_fn=test_data_set.collect_fn,
-                                 num_workers=0)
+                                 collate_fn=test_data_set.collect_fn)
 
         _hypothesises = []
         _references = []
@@ -355,7 +345,6 @@ def run(config, hype_params=None):
 
     global valid_bleu
     return valid_bleu
-
 
 
 

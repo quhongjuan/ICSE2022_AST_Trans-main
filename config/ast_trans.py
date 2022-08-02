@@ -34,7 +34,7 @@ max_src_len = 200
 data_type = 'pot'
 
 is_split = True
-is_test = True
+is_test = False
 
 # model
 hype_parameters = {
@@ -42,7 +42,7 @@ hype_parameters = {
     'par_heads': 8,   # [0,8]
     'max_rel_pos': 1,  # [1, 3, 5, 7]
     'num_layers': 6,  # [2, 4, 6]
-    'data_dir': '../data_set/processed/py',  # java, py
+    'data_dir': '../data_set/processed/java',  # java, py
     'is_split': True,  # need split
     'is_test': False
 }
@@ -72,7 +72,8 @@ val_interval = 5
 data_set = FastASTDataSet
 model = FastASTTrans
 fast_mod = False
-logger = ['tensorboard', 'clear_ml']
+#logger = ['tensorboard', 'clear_ml']
+logger = ['tensorboard']
 
 # optimizer
 learning_rate = 1e-3

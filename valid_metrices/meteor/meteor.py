@@ -115,7 +115,7 @@ class Meteor:
             self.meteor_p.stdin.flush()
             stats = dec(self.meteor_p.stdout.readline()).strip()
             eval_line = 'EVAL ||| {}'.format(stats)
-            # EVAL ||| stats 
+            # EVAL ||| stats
             self.meteor_p.stdin.write(enc('{}\n'.format(eval_line)))
             self.meteor_p.stdin.flush()
             score = float(dec(self.meteor_p.stdout.readline()).strip())
