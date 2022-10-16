@@ -11,6 +11,7 @@ import subprocess
 import sys
 import threading
 
+import nltk
 import psutil
 
 # Assumes meteor-1.5.jar is in the same directory as meteor.py.  Change as needed.
@@ -93,6 +94,17 @@ class Meteor:
             score = float(dec(self.meteor_p.stdout.readline()).strip())
 
         return score, scores
+
+    def compute_score2(self, references, hypotheses):
+        score = 0;
+        list_size=len(hypotheses)
+        if(list_size!=len(references)):
+            return 0
+        for i in range(list_size):
+             score+= nltk.translate.meteor_score.single_meteor_score(reference=references[i][0].split(),
+                                                                   hypothesis=hypotheses[i][0].split())
+
+        return score*1.0/list_size
 
     def method(self):
         return "METEOR"

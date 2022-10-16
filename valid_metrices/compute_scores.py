@@ -1,8 +1,22 @@
 from collections import Counter
 
 from valid_metrices.google_bleu import corpus_bleu
-from valid_metrices.meteor import Meteor
+from valid_metrices.meteor import Meteor, nltk
 from valid_metrices.rouge import Rouge
+
+
+# def compute_score2(references, hypotheses):
+#     score = 0;
+#     list_size = len(hypotheses)
+#     if (list_size != len(references)):
+#         return 0
+#     #
+#     for i in range(0,list_size):
+#         #print("references[1]:"+references[i])
+#         score += nltk.translate.meteor_score.single_meteor_score(reference=[references[i].split()],
+#                                                                  hypothesis=[hypotheses[i].split()])
+#
+#     return score * 1.0 / list_size
 
 
 def eval_accuracies(hypotheses, references):
@@ -30,6 +44,7 @@ def eval_accuracies(hypotheses, references):
 
     # Compute METEOR scores
     meteor_calculator = Meteor()
-    meteor, _ = meteor_calculator.compute_score(references, hypotheses)
+    #meteor, _ = meteor_calculator.compute_score(references, hypotheses)
+    meteor= meteor_calculator.compute_score2(references, hypotheses)
 
     return bleu * 100, rouge_l * 100, meteor * 100, ind_bleu, ind_rouge

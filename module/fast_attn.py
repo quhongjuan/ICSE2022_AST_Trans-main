@@ -31,14 +31,14 @@ class FastMultiHeadedAttention(nn.Module):
 
         output = output.permute(0, 2, 1, 3).contiguous()
         new_value_shape = output.size()[:-2] + (-1,)
-        output = output.view(*new_value_shape)
+        output = output.view(*new_value_shape) #32 200 256
         output = self.linear_layers[-1](output)
 
         return output, None
 
     @staticmethod
     def rel_attn(q, k, v, start_nodes, end_nodes, rel_q, rel_k, rel_v):
-        """
+        """end_nodes = {Tensor: (32, 8, 8, 200)} tensor([[[[  0,   1,   2,  ..., 197, 198, 199],\n          [  0,   1,   2,  ..., 197, 198, 199],\n          [  0,   1,   2,  ..., 197, 198, 199],\n          ...,\n          [  0,   1,   2,  ..., 197, 198, 199],\n          [  0,   1,   2,  ..., 197, 198, 199],\n … View
         :param q: [batch_size, num_heads, seq_len, d_k]
         :param k: [batch_size, num_heads, seq_len, d_k]
         :param v: [batch_size, num_heads, seq_len, d_k]
@@ -139,7 +139,7 @@ class FastMultiHeadedAttention(nn.Module):
         output = output.sum(dim=-3)
 
         return output
-
+        #32 200 256
 
 
 

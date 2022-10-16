@@ -63,7 +63,7 @@ dropout = 0.2
 
 # train
 batch_size = 32
-num_epochs = 1
+num_epochs = 200
 num_threads = 0
 config_filepath = Path('./config/ast_trans.py')
 es_patience = 20

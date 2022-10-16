@@ -128,5 +128,5 @@ class FastASTEncoderLayer(nn.Module):
     def forward(self, src, start_nodes, end_nodes, rel_q, rel_k, rel_v):
         src, attn_weights = self.sublayer[0](src, lambda x: self.self_attn(x, x, x, start_nodes, end_nodes,
                                                                            rel_q, rel_k, rel_v))
-        src, _ = self.sublayer[1](src, self.feed_forward)
+        src, _ = self.sublayer[1](src, self.feed_forward) #32 200 256
         return src
